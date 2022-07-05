@@ -6,6 +6,7 @@ WORKDIR /app
 
 COPY go.mod ./
 COPY go.sum ./
+COPY DigiCertGlobalRootCA.crt.pem ./
 RUN go mod download
 
 COPY *.go ./

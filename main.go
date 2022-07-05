@@ -1,13 +1,28 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"database/sql"
 	"fmt"
+	"github.com/go-sql-driver/mysql"
 	_ "github.com/go-sql-driver/mysql"
+	"io/ioutil"
+	"log"
 )
 
 func main() {
-	db, err := sql.Open("mysql", "root:Manual@1995@tcp(mysql:3306)/pixie")
+
+	rootCertPool := x509.NewCertPool()
+	pem, err := ioutil.ReadFile("DigiCertGlobalRootCA.crt.pem")
+	if ok := rootCertPool.AppendCertsFromPEM(pem); !ok {
+		log.Fatal("Failed to append PEM.")
+	}
+	mysql.RegisterTLSConfig("custom", &tls.Config{RootCAs: rootCertPool})
+	var connectionString string
+	connectionString = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?allowNativePasswords=true&tls=custom",
+		"obspixieuser", "Test@1995", "obs-pixie-mysql.mysql.database.azure.com", "pixie")
+	db, _ := sql.Open("mysql", connectionString)
 	if err != nil {
 		panic(err.Error())
 	}

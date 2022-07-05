@@ -15,5 +15,5 @@ spec:
     spec:                        # Spec for the container which will run in the Pod
       containers:
         - name: go-mysql
-          image: lakshan/go-mysql:0.0.3
+          image: lakshan/go-mysql:0.0.4
           imagePullPolicy: Never
